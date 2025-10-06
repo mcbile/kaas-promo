@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,7 +12,6 @@
            ========================================================================== */
         :root {
             /* foundational surfaces */
-            
             --bg-color: #0D0E12;        /* page background */
             --card-bg-color: #1A1B20;   /* cards / sections */
             --border-color: #aaaaaa;    /* separators, borders */
@@ -33,7 +33,7 @@
             /* semantic utility */
             --success-color: #4caf50;
             --success-color-light: #94cf96; 
-            --danger-color:  #e53e3e;
+            --danger-color:  #d9534f;
             --new-color:     #eeeeee;
 
             /* typography & layout */
@@ -46,6 +46,11 @@
         /* ==========================================================================
            2. GLOBAL RESET & BODY
            ========================================================================== */
+        /* MODIFICATION 1: Added global box-sizing */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
         html { scroll-behavior: smooth; }
 
         body {
@@ -57,6 +62,10 @@
             font-weight: 400;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+        }
+        /* Class for locking scroll when menu is open */
+        body.menu-open {
+            overflow: hidden;
         }
 
         .container { padding: calc(var(--space-unit) * 3); }
@@ -70,7 +79,8 @@
             font-weight: 700;
         }
 
-        h1 { font-size: 2.5em; margin: 0; }
+        /* MODIFICATION 2: Responsive font size for H1 */
+        h1 { font-size: clamp(2em, 8vw, 3em); margin: 0; }
         h1 span { color: var(--accent-color); }
 
         h2 { font-size: 2em; letter-spacing: 0.05em; margin: 0; text-align: center; }
@@ -135,10 +145,11 @@
             padding: calc(var(--space-unit) * 3);
             display: flex;
             flex-direction: column;
-            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+            transition: box-shadow 0.2s ease, border-color 0.2s ease;
+            overflow-wrap: break-word;
+            overflow: hidden; /* MODIFICATION 1: Prevent internal overflow */
         }
         .card:hover, .card:focus-within {
-            transform: translateY(-5px);
             box-shadow: 0 10px 25px rgba(0,0,0,0.3);
             border-color: var(--accent-color);
         }
@@ -148,9 +159,9 @@
             margin-bottom: calc(var(--space-unit) * 2);
         }
 
-        ul { list-style: none; padding-left: 0; margin: 0; }
+        ul, dl { list-style: none; padding-left: 0; margin: 0; }
 
-        .privileges-list li, .rules-list li, .tournaments-list li, .prize-list li {
+        .privileges-list li, .rules-list li, .tournaments-list div, .prize-list div {
             margin-bottom: var(--space-unit);
             padding-left: calc(var(--space-unit)*4);
             position: relative;
@@ -160,34 +171,48 @@
             position: absolute; left: 0; top: 2px; font-size: 1.3em;
         }
         .rules-list li::before,
-        .tournaments-list li::before {
+        .tournaments-list dt::before {
             content: '→';
             position: absolute; left: 0; top: 2px;
             color: var(--accent-color); font-size: 1.3em;
         }
-        .prize-list li {
+        
+        .prize-list div {
             display: flex; justify-content: space-between;
             padding: var(--space-unit);
             background-color: rgba(0,0,0,0.2);
             border-radius: var(--radius-small);
+            padding-left: var(--space-unit); 
         }
-        .prize-list li::before { content: ''; }
+        .prize-list dt { font-weight: 700; }
+        
+        .tournaments-list div {
+             padding-left: 0; 
+        }
+        .tournaments-list dt {
+            padding-left: calc(var(--space-unit)*4);
+            position: relative;
+        }
+        .tournaments-list dd {
+            padding-left: calc(var(--space-unit)*4);
+            margin-left: 0;
+            font-size: 0.9em;
+            color: var(--text-secondary);
+        }
 
         /* ==========================================================================
            6. RESPONSIVE BREAKPOINTS
            ========================================================================== */
+        @media (max-width: 767px) {
+            .card {
+                padding: calc(var(--space-unit) * 2.5); /* 20px */
+            }
+        }
+        
         @media (min-width: 768px) {
             .container   { max-width: 1200px; margin: calc(var(--space-unit)*8) auto; padding: 0 calc(var(--space-unit)*3); }
             h1           { font-size: 3.5em; }
-            .info-grid   { grid-template-columns: repeat(auto-fit,minmax(360px,1fr)); }
-            .no-wager-grid{ grid-template-columns: repeat(auto-fit,minmax(340px,1fr)); }
-            .four-cols-grid { grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); }
-            .three-cols-grid{ grid-template-columns: repeat(auto-fit,minmax(300px,1fr)); }
-        }
-        @media (min-width: 1200px) {
-            .four-cols-grid { grid-template-columns: repeat(4,1fr); }
-            .hero-benefits  { grid-template-columns: repeat(3,1fr); }
-            .no-wager-grid  { grid-template-columns: repeat(3,1fr); }
+            .info-grid:not(.slider-grid) { grid-template-columns: repeat(auto-fit,minmax(360px,1fr)); }
         }
 
         /* ==========================================================================
@@ -219,13 +244,10 @@
             align-items: center;
             text-align: center;
             gap: calc(var(--space-unit)*1.5);
-            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+            transition: none;
         }
-        .benefit-item:hover, .benefit-item:focus-within {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            border-color: var(--accent-color);
-        }
+        .benefit-item:hover, .benefit-item:focus-within { }
+
         .benefit-text strong {
             display: block;
             font-size: 1.2em;
@@ -256,6 +278,14 @@
         }
         @keyframes pulse { 50% { transform: scale(1.1); } }
         .hero-cta { animation: pulse 2s ease-in-out infinite; }
+        
+        .subtitle-cta {
+             display: block;
+             margin-top: calc(var(--space-unit) * 3);
+             max-width: 400px;
+             margin-left: auto;
+             margin-right: auto;
+        }
 
         /* In-card TAB SYSTEM */
         .offer-tabs  { display: grid; grid-template-columns: repeat(auto-fill,minmax(100px,1fr)); gap: var(--space-unit); margin: calc(var(--space-unit)*2) 0; }
@@ -281,22 +311,37 @@
         summary { cursor: pointer; list-style: none; position: relative; }
         summary::-webkit-details-marker { display: none; }
 
-        /* In-card accordion */
         .collapsible-item { border-top: 1px solid var(--border-color); margin-top: calc(var(--space-unit)*2); padding-top: 0; }
         .card > .collapsible-item:first-of-type, .faq-card .collapsible-item:first-child { border-top: none; margin-top: 0; }
         .collapsible-item summary { padding: calc(var(--space-unit)*2) 30px calc(var(--space-unit)*2) 0; font-size: 1.1em; font-weight: 500; }
-        .collapsible-item summary::after {
+      
+        .collapsible-item summary::after,
+        .section-accordion > summary::after {
             content: '+';
-            position: absolute; right: 5px; top: 50%;
-            transform: translateY(-40%);
-            font-size: 1.5em; line-height: 1;
-            color: var(--accent-color);
-            transition: transform 0.2s ease, color 0.2s ease;
+            font-size: 1.5em;
+            line-height: 1;
+            transition: transform 0.3s ease, color 0.3s ease;
+            color: var(--success-color); 
         }
-        .collapsible-item[open] > summary::after { transform: translateY(-40%) rotate(45deg); color: var(--danger-color); }
+
+        .collapsible-item[open] > summary::after,
+        .section-accordion[open] > summary::after {
+            transform: rotate(45deg);
+            color: var(--danger-color); 
+        }
+
+        .collapsible-item summary::after {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-40%);
+        }
+        .collapsible-item[open] > summary::after {
+             transform: translateY(-40%) rotate(45deg);
+        }
+        
         .collapsible-item .collapsible-content { padding: 0 0 calc(var(--space-unit)*2) 0; color: var(--text-secondary); text-transform: none; }
 
-        /* Section accordion titles – OPEN/CLOSED colour logic */
         .section-accordion > summary {
             padding: var(--space-unit);
             border-radius: var(--radius-small);
@@ -304,17 +349,53 @@
             display: flex; align-items: center;
         }
         .section-accordion > summary:hover { background-color: rgba(255,255,255,0.05); }
-        .section-accordion > summary > h2 { display: inline-block; margin: 0; text-align: left; font-size: 1.8em; color: var(--title-closed); }
+        .section-accordion > summary > h2 { display: inline-block; margin: 0; text-align: left; font-size: 1.8em; }
         .section-accordion[open] > summary h2   { color: var(--title-open); }
         .section-accordion:not([open]) > summary h2 { color: var(--title-closed); }
+        
         .section-accordion > summary::after {
-            content: '▼';
-            font-size: 1.5em; position: relative; top: 2px; margin-left: auto;
-            color: var(--success-color);
-            transition: transform 0.3s ease, color 0.3s ease;
+            margin-left: auto;
+            position: relative;
+            top: 2px;
         }
-        .section-accordion[open] > summary::after { transform: rotate(180deg); color: var(--danger-color); }
         .section-accordion > *:not(summary) { margin-top: calc(var(--space-unit)*2); }
+        
+        /* INACTIVE BONUS STYLES */
+        .card-inactive {
+            background-color: #16171B;
+            border-color: #555;
+            position: relative;
+            filter: blur(1px);
+        }
+        .card-inactive:hover, .card-inactive:focus-within {
+             transform: none;
+             box-shadow: none;
+             border-color: #555;
+        }
+        .card-inactive::after {
+            content: 'This bonus is not active yet';
+            position: absolute;
+            bottom: calc(var(--space-unit) * 3);
+            left: 50%;
+            transform: translateX(-50%); 
+            background-color: var(--bg-color); 
+            color: var(--text-primary); 
+            border: 1px solid var(--border-color);
+            padding: var(--space-unit) calc(var(--space-unit) * 2);
+            border-radius: var(--radius-small);
+            font-size: 0.9em;
+            font-weight: 600;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+            z-index: 10;
+            pointer-events: none;
+        }
+        .card-inactive:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
 
         /* FINAL CTA SECTION */
         .cta-section {
@@ -324,10 +405,274 @@
             border-radius: var(--radius-main);
             border: 1px solid var(--border-color);
         }
+
+        /* SCROLL-TO-TOP BUTTON */
+        #scrollTopBtn {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 48px;
+            height: 48px;
+            background-color: var(--card-bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-main);
+            cursor: pointer;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease, background-color 0.2s ease, border-color 0.2s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+        #scrollTopBtn::before {
+            content: '';
+            width: 0;
+            height: 0;
+            border-left: 7px solid transparent;
+            border-right: 7px solid transparent;
+            border-bottom: 7px solid var(--text-secondary);
+            transition: border-color 0.2s ease;
+            margin-top: -3px; /* visual centering */
+        }
+        #scrollTopBtn:hover {
+            background-color: var(--accent-color-hover);
+            border-color: var(--accent-color);
+        }
+        #scrollTopBtn:hover::before {
+            border-bottom-color: var(--bg-color);
+        }
+        #scrollTopBtn.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        /* SLIDER STYLES */
+        .slider-container {
+            position: relative;
+        }
+        .slider-wrapper {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            cursor: grab;
+            padding: 5px 0 15px 0; 
+            margin: 0;
+        }
+        .slider-wrapper.is-dragging {
+            cursor: grabbing;
+            scroll-behavior: auto;
+            scroll-snap-type: none;
+        }
+        .slider-wrapper::-webkit-scrollbar {
+            display: none;
+        }
+        .slider-grid {
+            display: flex;
+            flex-wrap: nowrap;
+            gap: calc(var(--space-unit) * 3);
+            grid-template-columns: none !important;
+        }
+        .slider-grid > .card {
+            flex-shrink: 0;
+            width: 100%; 
+            scroll-snap-align: start; 
+        }
+        .slider-pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: calc(var(--space-unit) * 1.5);
+            margin-top: calc(var(--space-unit) * 2);
+            padding-bottom: calc(var(--space-unit) * 2);
+        }
+        .pagination-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--border-color);
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+            border: none;
+            padding: 0;
+        }
+        .pagination-dot:hover {
+            transform: scale(1.2);
+        }
+        .pagination-dot.is-active {
+            background-color: var(--accent-color);
+            transform: scale(1.3);
+        }
+
+        @media (min-width: 768px) {
+            .hero-benefits { grid-template-columns: repeat(3,1fr); }
+            .slider-grid > .card { 
+                width: calc(50% - (var(--space-unit) * 3 / 2)); 
+                scroll-snap-align: center; 
+            }
+            .slider-wrapper {
+                 padding: 5px 0 15px 5px; 
+                 margin-left: -5px;
+            }
+        }
+        @media (min-width: 1024px) {
+            .no-wager-grid.slider-grid > .card,
+            .three-cols-grid.slider-grid > .card {
+                width: calc(100% / 3 - (var(--space-unit) * 6 / 3));
+            }
+            .four-cols-grid.slider-grid > .card {
+                width: calc(100% / 4 - (var(--space-unit) * 9 / 4));
+            }
+        }
+        
+        /* ==========================================================================
+           8. NAVIGATION MENU
+           ========================================================================== */
+        .menu-toggle-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1101;
+            width: 48px;
+            height: 48px;
+            background-color: var(--card-bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-main);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            padding: 10px;
+            transition: background-color 0.2s ease;
+        }
+        .menu-toggle-btn:hover {
+             background-color: rgba(255,255,255,0.1);
+        }
+
+        .menu-toggle-btn .burger-line {
+            width: 100%;
+            height: 2px;
+            background-color: var(--text-primary);
+            border-radius: 2px;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .main-nav {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 100%;
+            max-width: 320px;
+            height: 100%;
+            background-color: var(--card-bg-color);
+            border-left: 1px solid var(--border-color);
+            z-index: 1100;
+            transform: translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            display: flex;
+            flex-direction: column;
+            padding: 80px 20px 20px;
+            overflow-y: auto;
+        }
+        
+        .main-nav .nav-close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 48px;
+            height: 48px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+        }
+        .main-nav .nav-close-btn::before,
+        .main-nav .nav-close-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 28px;
+            height: 2px;
+            background-color: var(--danger-color);
+            transition: background-color 0.2s ease;
+        }
+        .main-nav .nav-close-btn::before {
+            transform: translate(-50%, -50%) rotate(45deg);
+        }
+        .main-nav .nav-close-btn::after {
+            transform: translate(-50%, -50%) rotate(-45deg);
+        }
+        .main-nav .nav-close-btn:hover::before,
+        .main-nav .nav-close-btn:hover::after {
+            background-color: var(--accent-color);
+        }
+        
+        .main-nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .main-nav ul a {
+            display: block;
+            padding: 12px 16px;
+            text-decoration: none;
+            color: var(--text-secondary-light);
+            font-weight: 500;
+            border-radius: var(--radius-small);
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .main-nav ul a:hover {
+            background-color: var(--accent-color);
+            color: var(--bg-color);
+        }
+
+        /* Menu Open State */
+        body.menu-open .main-nav {
+            transform: translateX(0);
+        }
+        body.menu-open #scrollTopBtn {
+            opacity: 0;
+            visibility: hidden;
+        }
     </style>
 </head>
 
 <body>
+
+<!-- MODIFICATION 3: Navigation Menu HTML -->
+<button class="menu-toggle-btn" aria-label="Open navigation menu" aria-expanded="false">
+    <span class="burger-line"></span>
+    <span class="burger-line"></span>
+    <span class="burger-line"></span>
+</button>
+
+<nav class="main-nav">
+    <button class="nav-close-btn" aria-label="Close navigation menu"></button>
+    <ul>
+        <li><a href="#welcome-title">Welcome Package</a></li>
+        <li><a href="#vip-welcome-title">No-Wager Greeting</a></li>
+        <li><a href="#weekly-title">Weekly Delicacies</a></li>
+        <li><a href="#cheese-club-title">The Cheese Club</a></li>
+        <li><a href="#promo-title">Promotions</a></li>
+        <li><a href="#general-info-title">General Information</a></li>
+        <li><a href="#faq-title">FAQ</a></li>
+    </ul>
+</nav>
+<!-- End of Navigation Menu HTML -->
+
 <main class="container">
     <!-- =============== HERO ================================= -->
     <header class="page-header">
@@ -360,43 +705,53 @@
     
     <details class="section-accordion" open>
         <summary>
-            <h2 id="welcome-title">The Grand Welcome Package</h2>
+            <h2 id="welcome-title">Welcome Package</h2>
         </summary>
         <p class="section-subtitle">Your adventure begins with four powerful deposit bonuses, designed to give you the ultimate head start. Here’s how we’ll boost your first four deposits:</p>
         
-        <div class="info-grid four-cols-grid">
+        <div class="info-grid four-cols-grid slider-grid">
             <article class="card" aria-labelledby="dep1-title">
                 <h3 id="dep1-title">1st Deposit</h3>
-                <p>Make your first deposit and we'll double it, giving you up to 1.500€ in bonus cash, plus entry to our 4-day Free Spin wheel!</p>
+                <p>Make your first deposit and we'll double it, giving you up to 1.500€ in bonus cash, plus a 4-day package of up to 500 Free Spins!</p>
                 <h4>Bonus: <span class="text-highlight-open">100% up to 1.500€</span></h4>
                 <h4>Spins: <span class="text-highlight-open">Up to 500 FS</span></h4>
                 <details class="collapsible-item"><summary>Terms & Conditions</summary><div class="collapsible-content">
-                    <h4>About the Free Spin Wheel</h4>
-                    <p>Your 500 Free Spins are awarded via our exclusive Free Spin Wheel. For four consecutive days after your first deposit, you get one spin per day on the wheel to win a random number of spins.</p>
-                    <ul class="rules-list"><li><strong>Min. Deposit:</strong> 30€</li><li><strong>Wager:</strong> x35</li><li><strong>Max Bet with Bonus:</strong> 3€</li><li><strong>Max Win from Bonus:</strong> 10x Bonus Amount</li></ul></div></details>
+                    <h4>About the Free Spins Package</h4>
+                    <p>Your Free Spins are awarded over four consecutive days:</p>
+                    <ul class="rules-list">
+                        <li><strong>Day 1:</strong> Get 30 Free Spins.</li>
+                        <li><strong>Day 2:</strong> Get 35 Free Spins.</li>
+                        <li><strong>Day 3:</strong> Get 35 Free Spins.</li>
+                        <li><strong>Day 4:</strong> Spin the FS Wheel to win 50, 100, 150, 200, 250, or 400 Free Spins!</li>
+                    </ul>
+                    <br>
+                    <ul class="rules-list">
+                        <li><strong>Min. Deposit:</strong> 30€</li>
+                        <li><strong>Wager:</strong> x35</li>
+                        <li><strong>Max Bet with Bonus:</strong> 5€</li>
+                        <li><strong>Max Win from Bonus:</strong> 10x Bonus Amount</li>
+                        <li><strong>Free Spin Bet Value:</strong> 0.10€</li>
+                    </ul></div></details>
             </article>
 
             <article class="card" aria-labelledby="dep2-title">
                 <h3 id="dep2-title">2nd Deposit</h3>
-                <p>Keep the momentum going! Your second deposit gets a massive 75% boost. Plus, you get to spin the <b>Wheel of Cheese</b> to win up to 100 loyalty Cheese Points (CP)!</p>
+                <p>Keep the momentum going! Your second deposit gets a massive 75% boost to continue your adventure.</p>
                 <h4>Bonus: <span class="text-highlight-open">75% up to 500€</span></h4>
-                <h4>Cheese Points:<span class="text-highlight-open"> Up to 100</span></h4>
                 <details class="collapsible-item"><summary>Terms & Conditions</summary><div class="collapsible-content"><ul class="rules-list"><li><strong>Min. Deposit:</strong> 40€</li><li><strong>Wager:</strong> x35</li><li><strong>Max Bet with Bonus:</strong> 5€</li><li><strong>Max Win from Bonus:</strong> 10x Bonus Amount</li></ul></div></details>
             </article>
 
             <article class="card" aria-labelledby="dep3-title">
                 <h3 id="dep3-title">3rd Deposit</h3>
-                <p>We continue to reward your loyalty with a 50% bonus on your third deposit, plus another chance to spin the Wheel of Cheese for more CP.</p>
+                <p>We continue to reward your loyalty with a 50% bonus on your third deposit to keep the fun going.</p>
                 <h4>Bonus: <span class="text-highlight-open">50% up to 500€</span></h4>
-                <h4>Cheese Points:<span class="text-highlight-open"> Up to 100</span></h4>
                  <details class="collapsible-item"><summary>Terms & Conditions</summary><div class="collapsible-content"><ul class="rules-list"><li><strong>Min. Deposit:</strong> 50€</li><li><strong>Wager:</strong> x35</li><li><strong>Max Bet with Bonus:</strong> 5€</li><li><strong>Max Win from Bonus:</strong> 10x Bonus Amount</li></ul></div></details>
             </article>
 
             <article class="card" aria-labelledby="dep4-title">
                 <h3 id="dep4-title">4th Deposit</h3>
-                <p>Your fourth deposit unlocks a permanent perk: an extra 5% wager-free cashback on top of your standard rate! And yes, another spin on the Wheel of Cheese.</p>
-                <h4>Perk: <span class="text-highlight-success">+5% Daily Cashback</span></h4>
-                <h4>Cheese Points:<span class="text-highlight-open"> Up to 100</span></h4>
+                <p>Your fourth deposit unlocks a permanent perk: an extra 5% wager-free cashback on top of your standard rate!</p>
+                <h4>Perk: <span class="text-highlight-success">+5% Extra No-Wager Cashback</span></h4>
                 <details class="collapsible-item"><summary>Terms & Conditions</summary><div class="collapsible-content"><ul class="rules-list"><li><strong>Min. Daily Deposit to Qualify:</strong> 100€</li><li><strong>Cashback:</strong> No Wager!</li><li><strong>Max Win from Cashback:</strong> 10x Credited Amount</li></ul></div></details>
             </article>
         </div>
@@ -409,7 +764,7 @@
              <h2 id="vip-welcome-title">No-Wager Greeting</h2>
         </summary>
         <p class="section-subtitle">An exclusive choice for high-rollers, focused on pure, wager-free cash rewards and immediate VIP perks from day one.</p>
-        <div class="info-grid no-wager-grid">
+        <div class="info-grid no-wager-grid slider-grid">
              <article class="card" aria-labelledby="vip-day1a-title">
                 <h3 id="vip-day1a-title">1. Tasty Start</h3>
                 <h4>Instant 10% Cash</h4>
@@ -447,7 +802,7 @@
                 <details class="collapsible-item"><summary>Terms & Conditions</summary><div class="collapsible-content"><ul class="rules-list"><li><strong>FS Bet:</strong> 0.10€</li><li><strong>Max Win from FS:</strong> 5x Deposit Amount</li><li><strong>Max Bet:</strong> 5€ / <strong>Wager:</strong> x35</li></ul></div></details>
             </article>
 
-                     <article class="card">
+            <article class="card card-inactive">
                 <h3>Cheesy Midweek Reload</h3>
                 <p>Recharge your balance on Wednesday with a powerful 50% reload bonus. The more you deposit, the bigger the bonus!</p>
                 <div class="offer-tabs">
@@ -487,7 +842,7 @@
                  <details class="collapsible-item"><summary>Terms & Conditions</summary><div class="collapsible-content"><ul class="rules-list"><li><strong>FS Bet:</strong> 0.50€</li><li><strong>Max Win from FS:</strong> 5x Deposit Amount</li><li><strong>Max Bet:</strong> 5€ / <strong>Wager:</strong> x35</li></ul></div></details>
             </article>
 
-            <article class="card" tabindex="0">
+            <article class="card card-inactive" tabindex="0">
                 <h3>Double Cheese on Friday</h3>
                 <p>Accelerate your VIP progress! Play any Live Casino game on Friday after depositing and earn Cheese Points twice as fast to level up quicker.</p>
                 <ul class="privileges-list"><li>Deposit <strong>50€+</strong> → Earn <strong>2x Cheese Points</strong> in all Live Games!</li></ul>
@@ -499,11 +854,27 @@
                 <ul class="privileges-list"><li><strong>When:</strong> Saturday, 21:00 - 01:00 CET</li><li><strong>How:</strong> Top 3 players by wager share the Jackpot (50%-30%-20%)</li><li><strong>Prize:</strong> <span class="text-highlight-success">Pure Cash Wins, No Conditions!</span></li></ul>
             </article>
 
-            <article class="card" tabindex="0">
-                <h3>Sunday's Cheese Story</h3>
-                <p>A special thank you for our active players. Stay engaged with our Stories during the week to unlock a no-deposit Free Spins gift on Sunday!</p>
-                <ul class="privileges-list"><li>Get <strong>50 Free Spins (No Deposit!)</strong></li></ul>
-                 <details class="collapsible-item"><summary>How to Claim</summary><div class="collapsible-content"><ul class="rules-list"><li>Check our "Stories" 5 days in the current week (Mon-Sun).</li><li>Must have made a deposit in the last 7 days.</li><li>Must have at least 3 lifetime deposits.</li><li><strong>Max Win:</strong> 100€ / <strong>Wager:</strong> x40</li></ul></div></details>
+            <article class="card">
+                <h3>Cheesy Wheel - Daily Wins</h3>
+                <p>Spin & Win Free Spins Every Day! Complete 300 real-money spins (from €0.2 bets) and unlock your Daily Wheel of Fortune reward! The mission updates daily — spin, complete, and win!</p>
+                <ul class="privileges-list">
+                    <li><strong>Reward:</strong> Up to 60 Free Spins (20/40/60)</li>
+                    <li><strong>Game:</strong> Belatra - Fortune Mummy</li>
+                    <li><strong>Max Win:</strong> 300 €</li>
+                </ul>
+                <details class="collapsible-item">
+                    <summary>Terms & Conditions</summary>
+                    <div class="collapsible-content">
+                        <ul class="rules-list">
+                            <li>Complete 300 real-money bets of €0.2 or more to unlock the wheel.</li>
+                            <li>Only real-money bets count toward completing the mission.</li>
+                            <li>Free Spins will be automatically credited after completing the mission.</li>
+                            <li>Wager the Free Spins winnings <strong>x5</strong> to withdraw.</li>
+                            <li>Free Spins are valid for 3 days.</li>
+                            <li>Mission resets daily; each day brings a new reward.</li>
+                        </ul>
+                    </div>
+                </details>
             </article>
         </div>
     </details>
@@ -515,7 +886,8 @@
             <h2 id="cheese-club-title">The Cheese Club</h2>
         </summary>
         <p class="section-subtitle">Our loyalty program where every bet counts! Automatically become a member and climb the tiers to unlock permanent, powerful perks.</p>
-        <div class="info-grid three-cols-grid">
+        <a href="https://cheese-club.netlify.app/" target="_blank" rel="noopener noreferrer" class="cta-button subtitle-cta">Click to Learn More</a>
+        <div class="info-grid three-cols-grid slider-grid" style="margin-top: calc(var(--space-unit) * 5);">
             <article class="card">
                 <h3>🥉 Taster</h3>
                 <p>Your journey begins here, discovering the first rewards of our club.</p>
@@ -565,7 +937,17 @@
                 <h3>Lottery</h3>
                 <h4>2.500€ Prize Pool</h4>
                 <p>Your deposits give you more than just playtime—they give you a chance to win big in our lottery, drawn every 2 weeks!</p>
-                 <details class="collapsible-item"><summary>View Prize Distribution</summary><div class="collapsible-content"><ul class="prize-list"><li><strong>500€</strong> <span>1 x Winner</span></li><li><strong>200€</strong> <span>2 x Winners</span></li><li><strong>100€</strong> <span>3 x Winners</span></li><li><strong>50€</strong> <span>5 x Winners</span></li><li><strong>30€</strong> <span>10 x Winners</span></li><li><strong>10€</strong> <span>25 x Winners</span></li><li><strong>5€</strong> <span>100 x Winners</span></li></ul></div></details>
+                 <details class="collapsible-item"><summary>View Prize Distribution</summary><div class="collapsible-content">
+                    <dl class="prize-list">
+                        <div><dt>500€</dt> <dd>1 x Winner</dd></div>
+                        <div><dt>200€</dt> <dd>2 x Winners</dd></div>
+                        <div><dt>100€</dt> <dd>3 x Winners</dd></div>
+                        <div><dt>50€</dt>  <dd>5 x Winners</dd></div>
+                        <div><dt>30€</dt>  <dd>10 x Winners</dd></div>
+                        <div><dt>10€</dt>  <dd>25 x Winners</dd></div>
+                        <div><dt>5€</dt>   <dd>100 x Winners</dd></div>
+                    </dl>
+                </div></details>
                 <details class="collapsible-item"><summary>How to Get Tickets & T&C</summary><div class="collapsible-content"><h4>Ticket Price by Deposit Amount</h4><p>The more you deposit, the cheaper your tickets become!</p><ul class="rules-list"><li><strong>Deposits from 20€:</strong> 10€ per ticket</li><li><strong>Deposits from 50€:</strong> 8€ per ticket</li><li><strong>Deposits from 100€:</strong> 7€ per ticket</li><li><strong>Deposits from 500€:</strong> 5€ per ticket</li><li><strong>Deposits from 1.000€:</strong> 3€ per ticket</li></ul><br><h4>Lottery Rules</h4><ul class="rules-list"><li>The prize draw occurs every 2 weeks.</li><li>A maximum of one prize is awarded per participant (the highest-value one).</li><li>All winnings are subject to a <strong>x3 wagering requirement</strong>.</li></ul></div></details>
             </article>
 
@@ -581,24 +963,29 @@
                 <h3>Network Tournaments</h3>
                <h4>Top Providers. Big Wins</h4>
                 <p>We partner with top game providers to bring you massive campaigns with millions in prize money up for grabs each month.</p>
-                <details class="collapsible-item"><summary>View Key Tournaments</summary><div class="collapsible-content"><ul class="tournaments-list">
-                
-                <li><strong>Drops and Wins:</strong> 2.000.000€ Prize Pool 
-                <br>Provider: <strong>PRAGMATIC</strong></li>
-                
-                <li><strong>Lucky 7s:</strong> 7.000.000€ Prize Pool
-                 <br>Provider: <strong>VOLTENT</strong></li>
-                
-                <li><strong>Chasing the Gods:</strong> 385.000€ Prize Pool
-                <br>Provider: <strong>PLAYSON</strong></li>
-                
-                <li><strong>Drops Frenzy:</strong> 810.000€ Prize Pool
-                 <br>Provider: <strong>BGAMING</strong></li>
-
-                
-                <li><strong>Multiplier Madness:</strong> 1.215 Multipliers up to x500
-                 <br>Provider: <strong>1SPIN4WIN</strong></li>
-                 </ul>
+                <details class="collapsible-item"><summary>View Key Tournaments</summary><div class="collapsible-content">
+                    <dl class="tournaments-list">
+                        <div>
+                            <dt><strong>Drops and Wins:</strong> 2.000.000€ Prize Pool</dt>
+                            <dd>Provider: <strong>PRAGMATIC</strong></dd>
+                        </div>
+                        <div>
+                            <dt><strong>Lucky 7s:</strong> 7.000.000€ Prize Pool</dt>
+                            <dd>Provider: <strong>VOLTENT</strong></dd>
+                        </div>
+                        <div>
+                            <dt><strong>Chasing the Gods:</strong> 385.000€ Prize Pool</dt>
+                            <dd>Provider: <strong>PLAYSON</strong></dd>
+                        </div>
+                        <div>
+                            <dt><strong>Drops Frenzy:</strong> 810.000€ Prize Pool</dt>
+                            <dd>Provider: <strong>BGAMING</strong></dd>
+                        </div>
+                        <div>
+                            <dt><strong>Multiplier Madness:</strong> 1.215 Multipliers up to x500</dt>
+                            <dd>Provider: <strong>1SPIN4WIN</strong></dd>
+                        </div>
+                    </dl>
                 </div>
                 </details>
             </article>
@@ -609,7 +996,7 @@
     
     <details class="section-accordion">
         <summary><h2 id="general-info-title">General Information</h2></summary>
-        <div class="info-grid four-cols-grid">
+        <div class="info-grid four-cols-grid slider-grid">
             <article class="card">
                 <h3>Cheese Points (CP)</h3>
                 <p>CP are earned by playing with real money, through missions or promos. They help you level up to unlock better rewards and can also be spent directly in our Cheese Shop.</p>
@@ -621,7 +1008,7 @@
                             <li><strong>Other Games:</strong> 1 CP per 100€ of turnover</li>
                         </ul>
                         <br>
-                        <p>The "Wheel of Cheese" from the welcome package is a great way to earn a starting sum of CP!</p>
+                        <p>The "Wheel of Cheese", available in certain promotions, is a great way to earn a starting sum of CP!</p>
                     </div>
                 </details>
             </article>
@@ -644,24 +1031,24 @@
                 </details>
             </article>
             <article class="card">
-                <h3>Free Spin Wheel</h3>
-                <p>An exclusive feature for your 1st deposit! For 4 days, you get to spin the wheel to win up to 500 FS</p>
+                <h3>1st Deposit Free Spins</h3>
+                <p>Your first deposit unlocks a 4-day package of Free Spins, combining fixed amounts with a final wheel spin for a huge prize!</p>
                 <details class="collapsible-item">
                     <summary>How it Works</summary>
                     <div class="collapsible-content">
-                        <p>Guaranteed minimum of 160 Free Spins over 4 days!</p>
+                        <p>You get 100 FS over the first 3 days, plus a wheel spin on day 4.</p>
                         <ul class="rules-list">
-                            <li><strong>Day 1:</strong> Win 30, 40, 50, 60, 70, or <strong> 100 FS</strong> </li>
-                            <li><strong>Day 2:</strong> Win 45, 50, 55, 60, 70, or <strong> 100 FS</strong> </li>
-                            <li><strong>Day 3:</strong> Win 55, 60, 65, 70, 75, or <strong> 100 FS</strong> </li>
-                            <li><strong>Day 4:</strong> Win 30, 35, 40, 45, 50, or <strong> 200 FS</strong> </li>
+                            <li><strong>Day 1:</strong> 30 Free Spins</li>
+                            <li><strong>Day 2:</strong> 35 Free Spins</li>
+                            <li><strong>Day 3:</strong> 35 Free Spins</li>
+                            <li><strong>Day 4 (Wheel):</strong> Win 50, 100, 150, 200, 250, or <strong>400 FS</strong></li>
                         </ul>
                     </div>
                 </details>
             </article>
             <article class="card">
                 <h3>Wheel of Cheese</h3>
-                <p>A special wheel awarded on your 2nd, 3rd, and 4th deposits, designed to boost your loyalty progress.</p>
+                <p>A special wheel, awarded through select promotions like the 'No-Wager Greeting', designed to boost your loyalty progress.</p>
                  <details class="collapsible-item">
                     <summary>How it Works</summary>
                     <div class="collapsible-content">
@@ -717,7 +1104,7 @@
             <h4>Common Types of Free Spins:</h4>
             <ul class="rules-list">
                 <li><strong>Deposit FS:</strong> These are awarded after you make a qualifying deposit, like in our "Cheesy Spins on Tuesday" offer.</li>
-                <li><strong>No-Deposit FS:</strong> A gift from the casino that doesn't require a deposit, like our "Sundays Cheese Story" bonus. These often have stricter conditions.</li>
+                <li><strong>No-Deposit FS:</strong> A gift from the casino that doesn't require a deposit, like our former "Sundays Cheese Story" bonus. These often have stricter conditions.</li>
                 <li><strong>High-Value FS:</strong> Spins with a higher-than-standard bet value (e.g., 0.50€ instead of 0.10€), offering the potential for larger wins. Our "Fifty Cheese on Thursday" is an example.</li>
                 <li><strong>Wager-Free FS:</strong> The most valuable type. Winnings from these spins are credited directly to your real money balance, with no wagering required.</li>
             </ul>
@@ -752,6 +1139,8 @@
 
 </main>
 
+<a id="scrollTopBtn" href="#" title="Go to top"></a>
+
 <footer class="page-footer" style="text-align:center;padding:24px;color:var(--text-secondary);font-size:14px;">
     <p>This promotional page was generated by MAE: OMA-II<br>
        <b style="color:#2196F3;">© 2025 McBile AI-Engine</b></p>
@@ -781,6 +1170,139 @@ document.addEventListener('DOMContentLoaded', () => {
             t.addEventListener('keydown', e => {
                 if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setActive(t); }
             });
+        });
+    });
+
+    /* SCROLL-TO-TOP BUTTON LOGIC */
+    const scrollTopBtn = document.getElementById('scrollTopBtn');
+    if (scrollTopBtn) {
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                scrollTopBtn.classList.add('visible');
+            } else {
+                scrollTopBtn.classList.remove('visible');
+            }
+        });
+        scrollTopBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    }
+
+    /* SLIDER LOGIC */
+    const initSlider = (gridElement) => {
+        const container = document.createElement('div');
+        container.className = 'slider-container';
+        const wrapper = document.createElement('div');
+        wrapper.className = 'slider-wrapper';
+        const pagination = document.createElement('div');
+        pagination.className = 'slider-pagination';
+
+        gridElement.parentNode.insertBefore(container, gridElement);
+        wrapper.appendChild(gridElement);
+        container.appendChild(wrapper);
+        container.appendChild(pagination);
+
+        const slides = Array.from(gridElement.children);
+        const dots = [];
+
+        slides.forEach((slide, index) => {
+            const dot = document.createElement('button');
+            dot.className = 'pagination-dot';
+            dot.setAttribute('aria-label', `Go to slide ${index + 1}`);
+            dot.addEventListener('click', () => {
+                const slideWidth = slide.getBoundingClientRect().width;
+                const gap = parseFloat(getComputedStyle(gridElement).gap) || 0;
+                wrapper.scrollLeft = index * (slideWidth + gap);
+            });
+            pagination.appendChild(dot);
+            dots.push(dot);
+        });
+
+        const updateActiveDot = () => {
+            const wrapperCenter = wrapper.getBoundingClientRect().left + wrapper.offsetWidth / 2;
+            let closestIndex = 0;
+            let minDistance = Infinity;
+
+            slides.forEach((slide, index) => {
+                const slideCenter = slide.getBoundingClientRect().left + slide.offsetWidth / 2;
+                const distance = Math.abs(wrapperCenter - slideCenter);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestIndex = index;
+                }
+            });
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('is-active', index === closestIndex);
+            });
+        };
+
+        let debounceTimer;
+        wrapper.addEventListener('scroll', () => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(updateActiveDot, 50);
+        });
+
+        let isDown = false, startX, scrollLeft;
+
+        const startDrag = (e) => {
+            isDown = true;
+            wrapper.classList.add('is-dragging');
+            startX = (e.pageX || e.touches[0].pageX) - wrapper.offsetLeft;
+            scrollLeft = wrapper.scrollLeft;
+        };
+        const endDrag = () => {
+            isDown = false;
+            wrapper.classList.remove('is-dragging');
+        };
+        const moveDrag = (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = (e.pageX || e.touches[0].pageX) - wrapper.offsetLeft;
+            const walk = (x - startX) * 2;
+            wrapper.scrollLeft = scrollLeft - walk;
+        };
+
+        wrapper.addEventListener('mousedown', startDrag);
+        wrapper.addEventListener('touchstart', startDrag, { passive: true });
+        wrapper.addEventListener('mouseup', endDrag);
+        wrapper.addEventListener('mouseleave', endDrag);
+        wrapper.addEventListener('touchend', endDrag);
+        wrapper.addEventListener('mousemove', moveDrag);
+        wrapper.addEventListener('touchmove', moveDrag, { passive: true });
+
+        updateActiveDot();
+        window.addEventListener('resize', updateActiveDot);
+    };
+
+    document.querySelectorAll('.slider-grid').forEach(grid => {
+        if (grid.children.length > 1) {
+            initSlider(grid);
+        }
+    });
+
+    /* NAVIGATION MENU LOGIC */
+    const menuToggleBtn = document.querySelector('.menu-toggle-btn');
+    const navCloseBtn = document.querySelector('.nav-close-btn');
+    const mainNav = document.querySelector('.main-nav');
+    const navLinks = mainNav.querySelectorAll('a');
+
+    const toggleMenu = () => {
+        const isMenuOpen = document.body.classList.toggle('menu-open');
+        menuToggleBtn.setAttribute('aria-expanded', isMenuOpen);
+    };
+    
+    menuToggleBtn.addEventListener('click', toggleMenu);
+    navCloseBtn.addEventListener('click', toggleMenu);
+    
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            if (document.body.classList.contains('menu-open')) {
+                toggleMenu();
+            }
         });
     });
 });
