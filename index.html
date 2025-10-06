@@ -46,7 +46,6 @@
         /* ==========================================================================
            2. GLOBAL RESET & BODY
            ========================================================================== */
-        /* MODIFICATION 1: Added global box-sizing */
         *, *::before, *::after {
             box-sizing: border-box;
         }
@@ -63,7 +62,6 @@
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
-        /* Class for locking scroll when menu is open */
         body.menu-open {
             overflow: hidden;
         }
@@ -79,7 +77,6 @@
             font-weight: 700;
         }
 
-        /* MODIFICATION 2: Responsive font size for H1 */
         h1 { font-size: clamp(2em, 8vw, 3em); margin: 0; }
         h1 span { color: var(--accent-color); }
 
@@ -147,7 +144,7 @@
             flex-direction: column;
             transition: box-shadow 0.2s ease, border-color 0.2s ease;
             overflow-wrap: break-word;
-            overflow: hidden; /* MODIFICATION 1: Prevent internal overflow */
+            overflow: hidden; 
         }
         .card:hover, .card:focus-within {
             box-shadow: 0 10px 25px rgba(0,0,0,0.3);
@@ -212,7 +209,16 @@
         @media (min-width: 768px) {
             .container   { max-width: 1200px; margin: calc(var(--space-unit)*8) auto; padding: 0 calc(var(--space-unit)*3); }
             h1           { font-size: 3.5em; }
-            .info-grid:not(.slider-grid) { grid-template-columns: repeat(auto-fit,minmax(360px,1fr)); }
+            .info-grid { grid-template-columns: repeat(auto-fit,minmax(360px,1fr)); }
+        }
+        
+        @media (min-width: 1024px) {
+             .three-cols-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .four-cols-grid {
+                 grid-template-columns: repeat(4, 1fr);
+            }
         }
 
         /* ==========================================================================
@@ -233,6 +239,9 @@
             width: 100%;
             max-width: 800px;
             margin: calc(var(--space-unit)*4) 0;
+        }
+        @media (min-width: 768px) {
+            .hero-benefits { grid-template-columns: repeat(3,1fr); }
         }
         .benefit-item {
             background-color: var(--card-bg-color);
@@ -259,7 +268,11 @@
 
         /* CTA BUTTON */
         .cta-button {
-            display: inline-block;
+            display: inline-flex; 
+            align-items: center;
+            text-align: center;   
+            justify-content: center; 
+            gap: 8px; 
             background-color: var(--accent-color);
             color: var(--bg-color);
             padding: calc(var(--space-unit)*1.5) calc(var(--space-unit)*4);
@@ -281,6 +294,7 @@
         
         .subtitle-cta {
              display: block;
+             text-align: center;
              margin-top: calc(var(--space-unit) * 3);
              max-width: 400px;
              margin-left: auto;
@@ -365,8 +379,15 @@
             background-color: #16171B;
             border-color: #555;
             position: relative;
-            filter: blur(1px);
         }
+        .card-inactive .card-content-blur {
+            filter: blur(0.5px);
+            transition: filter 0.2s ease;
+        }
+        .card-inactive:hover .card-content-blur {
+            filter: blur(0);
+        }
+
         .card-inactive:hover, .card-inactive:focus-within {
              transform: none;
              box-shadow: none;
@@ -379,7 +400,7 @@
             left: 50%;
             transform: translateX(-50%); 
             background-color: var(--bg-color); 
-            color: var(--text-primary); 
+            color: var(--accent-color); 
             border: 1px solid var(--border-color);
             padding: var(--space-unit) calc(var(--space-unit) * 2);
             border-radius: var(--radius-small);
@@ -450,88 +471,6 @@
             visibility: visible;
             transform: translateY(0);
         }
-
-        /* SLIDER STYLES */
-        .slider-container {
-            position: relative;
-        }
-        .slider-wrapper {
-            display: flex;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            scroll-behavior: smooth;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-            cursor: grab;
-            padding: 5px 0 15px 0; 
-            margin: 0;
-        }
-        .slider-wrapper.is-dragging {
-            cursor: grabbing;
-            scroll-behavior: auto;
-            scroll-snap-type: none;
-        }
-        .slider-wrapper::-webkit-scrollbar {
-            display: none;
-        }
-        .slider-grid {
-            display: flex;
-            flex-wrap: nowrap;
-            gap: calc(var(--space-unit) * 3);
-            grid-template-columns: none !important;
-        }
-        .slider-grid > .card {
-            flex-shrink: 0;
-            width: 100%; 
-            scroll-snap-align: start; 
-        }
-        .slider-pagination {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: calc(var(--space-unit) * 1.5);
-            margin-top: calc(var(--space-unit) * 2);
-            padding-bottom: calc(var(--space-unit) * 2);
-        }
-        .pagination-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background-color: var(--border-color);
-            cursor: pointer;
-            transition: background-color 0.2s ease, transform 0.2s ease;
-            border: none;
-            padding: 0;
-        }
-        .pagination-dot:hover {
-            transform: scale(1.2);
-        }
-        .pagination-dot.is-active {
-            background-color: var(--accent-color);
-            transform: scale(1.3);
-        }
-
-        @media (min-width: 768px) {
-            .hero-benefits { grid-template-columns: repeat(3,1fr); }
-            .slider-grid > .card { 
-                width: calc(50% - (var(--space-unit) * 3 / 2)); 
-                scroll-snap-align: center; 
-            }
-            .slider-wrapper {
-                 padding: 5px 0 15px 5px; 
-                 margin-left: -5px;
-            }
-        }
-        @media (min-width: 1024px) {
-            .no-wager-grid.slider-grid > .card,
-            .three-cols-grid.slider-grid > .card {
-                width: calc(100% / 3 - (var(--space-unit) * 6 / 3));
-            }
-            .four-cols-grid.slider-grid > .card {
-                width: calc(100% / 4 - (var(--space-unit) * 9 / 4));
-            }
-        }
         
         /* ==========================================================================
            8. NAVIGATION MENU
@@ -589,8 +528,8 @@
             position: absolute;
             top: 20px;
             right: 20px;
-            width: 48px;
-            height: 48px;
+            width: 52px;  
+            height: 52px; 
             background: transparent;
             border: none;
             cursor: pointer;
@@ -602,8 +541,8 @@
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 28px;
-            height: 2px;
+            width: 32px; 
+            height: 3px; 
             background-color: var(--danger-color);
             transition: background-color 0.2s ease;
         }
@@ -647,12 +586,15 @@
             opacity: 0;
             visibility: hidden;
         }
+        body.menu-open .menu-toggle-btn {
+            display: none;
+        }
     </style>
 </head>
 
 <body>
 
-<!-- MODIFICATION 3: Navigation Menu HTML -->
+<!-- Navigation Menu HTML -->
 <button class="menu-toggle-btn" aria-label="Open navigation menu" aria-expanded="false">
     <span class="burger-line"></span>
     <span class="burger-line"></span>
@@ -667,7 +609,6 @@
         <li><a href="#weekly-title">Weekly Delicacies</a></li>
         <li><a href="#cheese-club-title">The Cheese Club</a></li>
         <li><a href="#promo-title">Promotions</a></li>
-        <li><a href="#general-info-title">General Information</a></li>
         <li><a href="#faq-title">FAQ</a></li>
     </ul>
 </nav>
@@ -680,7 +621,7 @@
         <p class="section-subtitle">
             Welcome! Your journey at Kaasino starts with one of our incredible Welcome Packages, followed by a week packed with thrilling promotions.
         </p>
-        <a href="#welcome-title" class="cta-button hero-cta">🎯 Explore All Bonuses</a>
+        <!-- MODIFICATION 1: Button removed -->
         <div class="hero-benefits">
             <div class="benefit-item" tabindex="0">
                 <div class="benefit-text">
@@ -703,13 +644,13 @@
         </div>
     </header>
     
-    <details class="section-accordion" open>
+    <details class="section-accordion">
         <summary>
             <h2 id="welcome-title">Welcome Package</h2>
         </summary>
         <p class="section-subtitle">Your adventure begins with four powerful deposit bonuses, designed to give you the ultimate head start. Here’s how we’ll boost your first four deposits:</p>
         
-        <div class="info-grid four-cols-grid slider-grid">
+        <div class="info-grid four-cols-grid">
             <article class="card" aria-labelledby="dep1-title">
                 <h3 id="dep1-title">1st Deposit</h3>
                 <p>Make your first deposit and we'll double it, giving you up to 1.500€ in bonus cash, plus a 4-day package of up to 500 Free Spins!</p>
@@ -764,7 +705,7 @@
              <h2 id="vip-welcome-title">No-Wager Greeting</h2>
         </summary>
         <p class="section-subtitle">An exclusive choice for high-rollers, focused on pure, wager-free cash rewards and immediate VIP perks from day one.</p>
-        <div class="info-grid no-wager-grid slider-grid">
+        <div class="info-grid no-wager-grid three-cols-grid">
              <article class="card" aria-labelledby="vip-day1a-title">
                 <h3 id="vip-day1a-title">1. Tasty Start</h3>
                 <h4>Instant 10% Cash</h4>
@@ -803,35 +744,37 @@
             </article>
 
             <article class="card card-inactive">
-                <h3>Cheesy Midweek Reload</h3>
-                <p>Recharge your balance on Wednesday with a powerful 50% reload bonus. The more you deposit, the bigger the bonus!</p>
-                <div class="offer-tabs">
-                    <div class="offer-tab-trigger" data-tab-trigger="wed-dep100" tabindex="0">Deposit 100€+</div>
-                    <div class="offer-tab-trigger is-active" data-tab-trigger="wed-dep250" tabindex="0">Deposit 250€+</div>
-                    <div class="offer-tab-trigger" data-tab-trigger="wed-dep500" tabindex="0">Deposit 500€+</div>
+                <div class="card-content-blur">
+                    <h3>Cheesy Midweek Reload</h3>
+                    <p>Recharge your balance on Wednesday with a powerful 50% reload bonus. The more you deposit, the bigger the bonus!</p>
+                    <div class="offer-tabs">
+                        <div class="offer-tab-trigger" data-tab-trigger="wed-dep100" tabindex="0">Deposit 100€+</div>
+                        <div class="offer-tab-trigger is-active" data-tab-trigger="wed-dep250" tabindex="0">Deposit 250€+</div>
+                        <div class="offer-tab-trigger" data-tab-trigger="wed-dep500" tabindex="0">Deposit 500€+</div>
+                    </div>
+                    <div class="offer-content">
+                        <div class="offer-content-pane" data-tab-content="wed-dep100">
+                            <h4 class="result-text">You Get: 50€ Bonus</h4>
+                        </div>
+                        <div class="offer-content-pane is-active" data-tab-content="wed-dep250">
+                            <h4 class="result-text">You Get: 125€ Bonus</h4>
+                        </div>
+                        <div class="offer-content-pane" data-tab-content="wed-dep500">
+                            <h4 class="result-text">You Get: 250€ Bonus</h4>
+                        </div>
+                    </div>
+                    <details class="collapsible-item">
+                        <summary>Terms & Conditions</summary>
+                        <div class="collapsible-content">
+                            <ul class="rules-list">
+                                <li><strong>Min. Deposit to qualify:</strong> 100€</li>
+                                <li><strong>Max. Bonus available:</strong> 250€ (for a 500€ deposit)</li>
+                                <li><strong>Max Win from Bonus:</strong> 10x Bonus Amount</li>
+                                <li><strong>Max Bet:</strong> 5€ / <strong>Wager:</strong> x30</li>
+                            </ul>
+                        </div>
+                    </details>
                 </div>
-                <div class="offer-content">
-                    <div class="offer-content-pane" data-tab-content="wed-dep100">
-                        <h4 class="result-text">You Get: 50€ Bonus</h4>
-                    </div>
-                    <div class="offer-content-pane is-active" data-tab-content="wed-dep250">
-                        <h4 class="result-text">You Get: 125€ Bonus</h4>
-                    </div>
-                    <div class="offer-content-pane" data-tab-content="wed-dep500">
-                        <h4 class="result-text">You Get: 250€ Bonus</h4>
-                    </div>
-                </div>
-                <details class="collapsible-item">
-                    <summary>Terms & Conditions</summary>
-                    <div class="collapsible-content">
-                        <ul class="rules-list">
-                            <li><strong>Min. Deposit to qualify:</strong> 100€</li>
-                            <li><strong>Max. Bonus available:</strong> 250€ (for a 500€ deposit)</li>
-                            <li><strong>Max Win from Bonus:</strong> 10x Bonus Amount</li>
-                            <li><strong>Max Bet:</strong> 5€ / <strong>Wager:</strong> x30</li>
-                        </ul>
-                    </div>
-                </details>
             </article>          
             
             <article class="card">
@@ -843,9 +786,11 @@
             </article>
 
             <article class="card card-inactive" tabindex="0">
-                <h3>Double Cheese on Friday</h3>
-                <p>Accelerate your VIP progress! Play any Live Casino game on Friday after depositing and earn Cheese Points twice as fast to level up quicker.</p>
-                <ul class="privileges-list"><li>Deposit <strong>50€+</strong> → Earn <strong>2x Cheese Points</strong> in all Live Games!</li></ul>
+                <div class="card-content-blur">
+                    <h3>Double Cheese on Friday</h3>
+                    <p>Accelerate your VIP progress! Play any Live Casino game on Friday after depositing and earn Cheese Points twice as fast to level up quicker.</p>
+                    <ul class="privileges-list"><li>Deposit <strong>50€+</strong> → Earn <strong>2x Cheese Points</strong> in all Live Games!</li></ul>
+                </div>
             </article>
             
             <article class="card" tabindex="0">
@@ -887,7 +832,7 @@
         </summary>
         <p class="section-subtitle">Our loyalty program where every bet counts! Automatically become a member and climb the tiers to unlock permanent, powerful perks.</p>
         <a href="https://cheese-club.netlify.app/" target="_blank" rel="noopener noreferrer" class="cta-button subtitle-cta">Click to Learn More</a>
-        <div class="info-grid three-cols-grid slider-grid" style="margin-top: calc(var(--space-unit) * 5);">
+        <div class="info-grid three-cols-grid" style="margin-top: calc(var(--space-unit) * 5);">
             <article class="card">
                 <h3>🥉 Taster</h3>
                 <p>Your journey begins here, discovering the first rewards of our club.</p>
@@ -995,73 +940,6 @@
     <hr>
     
     <details class="section-accordion">
-        <summary><h2 id="general-info-title">General Information</h2></summary>
-        <div class="info-grid four-cols-grid slider-grid">
-            <article class="card">
-                <h3>Cheese Points (CP)</h3>
-                <p>CP are earned by playing with real money, through missions or promos. They help you level up to unlock better rewards and can also be spent directly in our Cheese Shop.</p>
-                <details class="collapsible-item">
-                    <summary>How to Earn</summary>
-                    <div class="collapsible-content">
-                        <ul class="rules-list">
-                            <li><strong>Slots:</strong> 1 CP per 50€ of turnover</li>
-                            <li><strong>Other Games:</strong> 1 CP per 100€ of turnover</li>
-                        </ul>
-                        <br>
-                        <p>The "Wheel of Cheese", available in certain promotions, is a great way to earn a starting sum of CP!</p>
-                    </div>
-                </details>
-            </article>
-            <article class="card">
-                <h3>Cashback</h3>
-                <p>Cashback is credited daily at 09:00 CET based on your net real-money loss from the previous day, from 10% up to 25%.</p>
-                <details class="collapsible-item">
-                    <summary>Formula & Rules</summary>
-                    <div class="collapsible-content">
-                        <h4>Net Loss Formula:</h4>
-                        <p style="font-weight: bold;">Deposits – Withdrawals – Balance</p>
-                        <br>
-                        <h4>Rules:</h4>
-                        <ul class="rules-list">
-                            <li><strong>Min. Cashback:</strong> 3€</li>
-                            <li><strong>Max. Cashback:</strong> 25% of daily deposits</li>
-                            <li><strong>Wager:</strong> x3 (Wager-free from VIP level 10+)</li>
-                        </ul>
-                    </div>
-                </details>
-            </article>
-            <article class="card">
-                <h3>1st Deposit Free Spins</h3>
-                <p>Your first deposit unlocks a 4-day package of Free Spins, combining fixed amounts with a final wheel spin for a huge prize!</p>
-                <details class="collapsible-item">
-                    <summary>How it Works</summary>
-                    <div class="collapsible-content">
-                        <p>You get 100 FS over the first 3 days, plus a wheel spin on day 4.</p>
-                        <ul class="rules-list">
-                            <li><strong>Day 1:</strong> 30 Free Spins</li>
-                            <li><strong>Day 2:</strong> 35 Free Spins</li>
-                            <li><strong>Day 3:</strong> 35 Free Spins</li>
-                            <li><strong>Day 4 (Wheel):</strong> Win 50, 100, 150, 200, 250, or <strong>400 FS</strong></li>
-                        </ul>
-                    </div>
-                </details>
-            </article>
-            <article class="card">
-                <h3>Wheel of Cheese</h3>
-                <p>A special wheel, awarded through select promotions like the 'No-Wager Greeting', designed to boost your loyalty progress.</p>
-                 <details class="collapsible-item">
-                    <summary>How it Works</summary>
-                    <div class="collapsible-content">
-                        <p>Each spin on the Wheel of Cheese grants you a random amount of Cheese Points (CP), from 5 up to 100, helping you climb the VIP ladder faster.</p>
-                    </div>
-                </details>
-            </article>
-        </div>
-    </details>
-
-    <hr>
-
-    <details class="section-accordion">
         <summary><h2 id="faq-title">FAQ</h2></summary>
         <p class="section-subtitle">Have questions? We've got answers. Here are some of the most common queries about our bonuses and promotions.</p>
         <div class="card faq-card">
@@ -1069,63 +947,87 @@
             <details class="collapsible-item"><summary>What is the difference between 'Turnover' and 'Deposit'?</summary><div class="collapsible-content"><p>A <strong>deposit</strong> is the money you transfer into your Kaasino account. <strong>Turnover</strong> (or wager) is the total amount of money you bet in games. For example, if you deposit 50€ and place 50 bets of 1€ each, your turnover is 50€, regardless of wins or losses. You earn CP based on your total turnover.</p></div></details>
             <details class="collapsible-item"><summary>How does the Top-Up Bonus work?</summary><div class="collapsible-content"><p>The Top-Up Bonus is an exclusive perk for our Gourmet tier members. It's an extra percentage of cash added directly to your deposit. For example, with a 5% Top-Up bonus, a 100€ deposit becomes 105€ in your balance. This 5€ bonus has a very low 1x wager, making it almost as flexible as your own cash.</p></div></details>
             <details class="collapsible-item"><summary>What is 'Wager-free Cashback'?</summary><div class="collapsible-content"><p>Wager-free cashback is pure cash! Starting from VIP Level 10, the cashback you receive has no wagering requirements. You can play with it immediately or withdraw it, giving you complete freedom.</p></div></details>
-    <details class="collapsible-item">
-        <summary>What is a Minimum Deposit?</summary>
-        <div class="collapsible-content">
-            <p>The Minimum Deposit is the smallest amount of money you must deposit in a single transaction to be eligible for a specific bonus offer. If you deposit less than this amount, the bonus will not be activated.</p>
-            <h4>Example:</h4>
-            <p>If a bonus requires a 'Min. Deposit: 30€', a deposit of 29.99€ will not trigger the offer. You must deposit 30€ or more in one go.</p>
-        </div>
-    </details>
-    <details class="collapsible-item">
-        <summary>What is a 'Max Bet' rule?</summary>
-        <div class="collapsible-content">
-            <p>The 'Max Bet' is the highest stake you are allowed to place per spin or game round while playing with an active bonus. This rule is crucial.</p>
-            <h4>Why is it important?</h4>
-            <p>Betting above the specified maximum (e.g., 5€) while a bonus is active is a breach of terms. This can lead to the forfeiture of the bonus and any winnings generated from it. This rule also applies to using "double-up" or "gamble" features within a game.</p>
-        </div>
-    </details>
-    <details class="collapsible-item">
-        <summary>What does "Max Win" mean?</summary>
-        <div class="collapsible-content">
-            <p>The "Max Win" rule sets a cap on the total amount you can convert from your bonus balance to your real money balance after completing the wagering requirement. This helps us manage risk and continue offering generous bonuses to all our players.</p>
-            <h4>Example:</h4>
-            <ul class="rules-list">
-                <li>You receive a <strong>50€ bonus</strong>. The max win is 10x this amount, so <strong>500€</strong>.</li>
-                <li>You play and, after completing the wager, your bonus balance is <strong>700€</strong>.</li>
-                <li>When the bonus is converted to real money, <strong>500€</strong> will be credited to your real balance, and the remaining 200€ will be forfeited.</li>
-            </ul>
-        </div>
-    </details>
-    <details class="collapsible-item">
-        <summary>What are Free Spins (FS) and their types?</summary>
-        <div class="collapsible-content">
-            <p>A Free Spin is a chance to spin a slot game one time without using your own money. Winnings from Free Spins are typically credited as bonus money and are subject to wagering requirements, unless stated otherwise.</p>
-            <h4>Common Types of Free Spins:</h4>
-            <ul class="rules-list">
-                <li><strong>Deposit FS:</strong> These are awarded after you make a qualifying deposit, like in our "Cheesy Spins on Tuesday" offer.</li>
-                <li><strong>No-Deposit FS:</strong> A gift from the casino that doesn't require a deposit, like our former "Sundays Cheese Story" bonus. These often have stricter conditions.</li>
-                <li><strong>High-Value FS:</strong> Spins with a higher-than-standard bet value (e.g., 0.50€ instead of 0.10€), offering the potential for larger wins. Our "Fifty Cheese on Thursday" is an example.</li>
-                <li><strong>Wager-Free FS:</strong> The most valuable type. Winnings from these spins are credited directly to your real money balance, with no wagering required.</li>
-            </ul>
-        </div>
-    </details>
-    <details class="collapsible-item">
-        <summary>How does a Deposit Bonus (%) work?</summary>
-        <div class="collapsible-content">
-            <p>A deposit bonus (or "match bonus") is when the casino matches a percentage of your deposit with bonus funds, giving you more to play with.</p>
-            <h4>Example: 100% up to 1.500€</h4>
-            <ul class="rules-list">
-                <li><strong>"100%"</strong> is the match percentage. It means we will double your deposit. If you deposit 100€, you get an extra 100€ in bonus money, for a total of 200€ to play with.</li>
-                <li><strong>"up to 1.500€"</strong> is the maximum bonus amount you can receive from this offer. To get the full 1.500€ bonus, you would need to deposit 1.500€. A deposit of 2.000€ would still grant a 1.500€ bonus.</li>
-            </ul>
-        </div>
-    </details>
-    <details class="collapsible-item"><summary>What are Cheese Points (CP)?</summary><div class="collapsible-content"><p>Cheese Points (CP) are the heart of our loyalty system. They serve two main purposes: VIP Level Progression and as a currency for our Cheese Shop, where you can buy bonuses.</p></div></details>
-    <details class="collapsible-item"><summary>Will I lose my VIP level if I'm inactive?</summary><div class="collapsible-content"><p>Never. Your level in the Cheese Club is permanent and based on your total lifetime accumulation of Cheese Points (CP). You can never be demoted.</p>
-</div>
-</details>
-</div>
+            <details class="collapsible-item">
+                <summary>What is a Minimum Deposit?</summary>
+                <div class="collapsible-content">
+                    <p>The Minimum Deposit is the smallest amount of money you must deposit in a single transaction to be eligible for a specific bonus offer. If you deposit less than this amount, the bonus will not be activated.</p>
+                    <h4>Example:</h4>
+                    <p>If a bonus requires a 'Min. Deposit: 30€', a deposit of 29.99€ will not trigger the offer. You must deposit 30€ or more in one go.</p>
+                </div>
+            </details>
+            <details class="collapsible-item">
+                <summary>What is a 'Max Bet' rule?</summary>
+                <div class="collapsible-content">
+                    <p>The 'Max Bet' is the highest stake you are allowed to place per spin or game round while playing with an active bonus. This rule is crucial.</p>
+                    <h4>Why is it important?</h4>
+                    <p>Betting above the specified maximum (e.g., 5€) while a bonus is active is a breach of terms. This can lead to the forfeiture of the bonus and any winnings generated from it. This rule also applies to using "double-up" or "gamble" features within a game.</p>
+                </div>
+            </details>
+            <details class="collapsible-item">
+                <summary>What does "Max Win" mean?</summary>
+                <div class="collapsible-content">
+                    <p>The "Max Win" rule sets a cap on the total amount you can convert from your bonus balance to your real money balance after completing the wagering requirement. This helps us manage risk and continue offering generous bonuses to all our players.</p>
+                    <h4>Example:</h4>
+                    <ul class="rules-list">
+                        <li>You receive a <strong>50€ bonus</strong>. The max win is 10x this amount, so <strong>500€</strong>.</li>
+                        <li>You play and, after completing the wager, your bonus balance is <strong>700€</strong>.</li>
+                        <li>When the bonus is converted to real money, <strong>500€</strong> will be credited to your real balance, and the remaining 200€ will be forfeited.</li>
+                    </ul>
+                </div>
+            </details>
+            <details class="collapsible-item">
+                <summary>What are Free Spins (FS) and their types?</summary>
+                <div class="collapsible-content">
+                    <p>A Free Spin is a chance to spin a slot game one time without using your own money. Winnings from Free Spins are typically credited as bonus money and are subject to wagering requirements, unless stated otherwise.</p>
+                    <h4>Common Types of Free Spins:</h4>
+                    <ul class="rules-list">
+                        <li><strong>Deposit FS:</strong> These are awarded after you make a qualifying deposit, like in our "Cheesy Spins on Tuesday" offer.</li>
+                        <li><strong>No-Deposit FS:</strong> A gift from the casino that doesn't require a deposit. These often have stricter conditions.</li>
+                        <li><strong>High-Value FS:</strong> Spins with a higher-than-standard bet value (e.g., 0.50€ instead of 0.10€), offering the potential for larger wins. Our "Fifty Cheese on Thursday" is an example.</li>
+                        <li><strong>Wager-Free FS:</strong> The most valuable type. Winnings from these spins are credited directly to your real money balance, with no wagering required.</li>
+                    </ul>
+                </div>
+            </details>
+            <details class="collapsible-item">
+                <summary>How does a Deposit Bonus (%) work?</summary>
+                <div class="collapsible-content">
+                    <p>A deposit bonus (or "match bonus") is when the casino matches a percentage of your deposit with bonus funds, giving you more to play with.</p>
+                    <h4>Example: 100% up to 1.500€</h4>
+                    <ul class="rules-list">
+                        <li><strong>"100%"</strong> is the match percentage. It means we will double your deposit. If you deposit 100€, you get an extra 100€ in bonus money, for a total of 200€ to play with.</li>
+                        <li><strong>"up to 1.500€"</strong> is the maximum bonus amount you can receive from this offer. To get the full 1.500€ bonus, you would need to deposit 1.500€. A deposit of 2.000€ would still grant a 1.500€ bonus.</li>
+                    </ul>
+                </div>
+            </details>
+            <details class="collapsible-item"><summary>Will I lose my VIP level if I'm inactive?</summary><div class="collapsible-content"><p>Never. Your level in the Cheese Club is permanent and based on your total lifetime accumulation of Cheese Points (CP). You can never be demoted.</p></div></details>
+            <!-- MODIFICATION 2: Merged content starts here -->
+            <details class="collapsible-item"><summary>What are Cheese Points (CP) and how do I earn them?</summary><div class="collapsible-content">
+                <p>Cheese Points (CP) are the heart of our loyalty system. They help you level up to unlock better rewards and can also be spent directly in our Cheese Shop.</p>
+                <br>
+                <h4>How to Earn:</h4>
+                <ul class="rules-list">
+                    <li><strong>Slots:</strong> 1 CP per 50€ of turnover</li>
+                    <li><strong>Other Games:</strong> 1 CP per 100€ of turnover</li>
+                </ul>
+                <br>
+                <p>The "Wheel of Cheese", available in certain promotions, is a great way to earn a starting sum of CP!</p>
+            </div></details>
+            <details class="collapsible-item"><summary>How does Cashback work?</summary><div class="collapsible-content">
+                <p>Cashback is credited daily at 09:00 CET based on your net real-money loss from the previous day, from 10% up to 25%.</p>
+                <h4>Net Loss Formula:</h4>
+                <p style="font-weight: bold;">Deposits – Withdrawals – Balance</p>
+                <br>
+                <h4>Rules:</h4>
+                <ul class="rules-list">
+                    <li><strong>Min. Cashback:</strong> 3€</li>
+                    <li><strong>Max. Cashback:</strong> 25% of daily deposits</li>
+                    <li><strong>Wager:</strong> x3 (Wager-free from VIP level 10+)</li>
+                </ul>
+            </div></details>
+            <details class="collapsible-item"><summary>What is the Wheel of Cheese?</summary><div class="collapsible-content">
+                <p>A special wheel, awarded through select promotions like the 'No-Wager Greeting', designed to boost your loyalty progress.</p>
+                <p>Each spin on the Wheel of Cheese grants you a random amount of Cheese Points (CP), from 5 up to 100, helping you climb the VIP ladder faster.</p>
+            </div></details>
         </div>
     </details>
 
@@ -1142,7 +1044,8 @@
 <a id="scrollTopBtn" href="#" title="Go to top"></a>
 
 <footer class="page-footer" style="text-align:center;padding:24px;color:var(--text-secondary);font-size:14px;">
-    <p>This promotional page was generated by MAE: OMA-II<br>
+    <!-- MODIFICATION 3: Footer text updated -->
+    <p>Generated by MAE / FUXI<br>
        <b style="color:#2196F3;">© 2025 McBile AI-Engine</b></p>
 </footer>
 
@@ -1185,104 +1088,18 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         scrollTopBtn.addEventListener('click', (e) => {
             e.preventDefault();
+            
+            // MODIFICATION 0: Auto-close all accordions
+            document.querySelectorAll('details.section-accordion').forEach(accordion => {
+                accordion.open = false;
+            });
+            
             window.scrollTo({
                 top: 0,
                 behavior: 'smooth'
             });
         });
     }
-
-    /* SLIDER LOGIC */
-    const initSlider = (gridElement) => {
-        const container = document.createElement('div');
-        container.className = 'slider-container';
-        const wrapper = document.createElement('div');
-        wrapper.className = 'slider-wrapper';
-        const pagination = document.createElement('div');
-        pagination.className = 'slider-pagination';
-
-        gridElement.parentNode.insertBefore(container, gridElement);
-        wrapper.appendChild(gridElement);
-        container.appendChild(wrapper);
-        container.appendChild(pagination);
-
-        const slides = Array.from(gridElement.children);
-        const dots = [];
-
-        slides.forEach((slide, index) => {
-            const dot = document.createElement('button');
-            dot.className = 'pagination-dot';
-            dot.setAttribute('aria-label', `Go to slide ${index + 1}`);
-            dot.addEventListener('click', () => {
-                const slideWidth = slide.getBoundingClientRect().width;
-                const gap = parseFloat(getComputedStyle(gridElement).gap) || 0;
-                wrapper.scrollLeft = index * (slideWidth + gap);
-            });
-            pagination.appendChild(dot);
-            dots.push(dot);
-        });
-
-        const updateActiveDot = () => {
-            const wrapperCenter = wrapper.getBoundingClientRect().left + wrapper.offsetWidth / 2;
-            let closestIndex = 0;
-            let minDistance = Infinity;
-
-            slides.forEach((slide, index) => {
-                const slideCenter = slide.getBoundingClientRect().left + slide.offsetWidth / 2;
-                const distance = Math.abs(wrapperCenter - slideCenter);
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    closestIndex = index;
-                }
-            });
-            dots.forEach((dot, index) => {
-                dot.classList.toggle('is-active', index === closestIndex);
-            });
-        };
-
-        let debounceTimer;
-        wrapper.addEventListener('scroll', () => {
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(updateActiveDot, 50);
-        });
-
-        let isDown = false, startX, scrollLeft;
-
-        const startDrag = (e) => {
-            isDown = true;
-            wrapper.classList.add('is-dragging');
-            startX = (e.pageX || e.touches[0].pageX) - wrapper.offsetLeft;
-            scrollLeft = wrapper.scrollLeft;
-        };
-        const endDrag = () => {
-            isDown = false;
-            wrapper.classList.remove('is-dragging');
-        };
-        const moveDrag = (e) => {
-            if (!isDown) return;
-            e.preventDefault();
-            const x = (e.pageX || e.touches[0].pageX) - wrapper.offsetLeft;
-            const walk = (x - startX) * 2;
-            wrapper.scrollLeft = scrollLeft - walk;
-        };
-
-        wrapper.addEventListener('mousedown', startDrag);
-        wrapper.addEventListener('touchstart', startDrag, { passive: true });
-        wrapper.addEventListener('mouseup', endDrag);
-        wrapper.addEventListener('mouseleave', endDrag);
-        wrapper.addEventListener('touchend', endDrag);
-        wrapper.addEventListener('mousemove', moveDrag);
-        wrapper.addEventListener('touchmove', moveDrag, { passive: true });
-
-        updateActiveDot();
-        window.addEventListener('resize', updateActiveDot);
-    };
-
-    document.querySelectorAll('.slider-grid').forEach(grid => {
-        if (grid.children.length > 1) {
-            initSlider(grid);
-        }
-    });
 
     /* NAVIGATION MENU LOGIC */
     const menuToggleBtn = document.querySelector('.menu-toggle-btn');
@@ -1300,6 +1117,20 @@ document.addEventListener('DOMContentLoaded', () => {
     
     navLinks.forEach(link => {
         link.addEventListener('click', () => {
+            // MODIFICATION 0: Auto-open target accordion
+            const targetId = link.getAttribute('href');
+            try {
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    const parentAccordion = targetElement.closest('details.section-accordion');
+                    if (parentAccordion) {
+                        parentAccordion.open = true;
+                    }
+                }
+            } catch (e) {
+                console.error("Could not find or open target for", targetId);
+            }
+
             if (document.body.classList.contains('menu-open')) {
                 toggleMenu();
             }
